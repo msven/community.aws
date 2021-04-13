@@ -334,16 +334,7 @@
     - name: remove testing target groups
       elb_target_group:
         name: "{{ item }}"
-        health_check_port: 80
-        protocol: http
-        port: 80
-        vpc_id: '{{ vpc.vpc.id }}'
         state: absent
-        target_type: instance
-        tags:
-          Description: "Created by {{ resource_prefix }}"
-        wait: true
-        wait_timeout: 400
       register: removed
       retries: 10
       until: removed is not failed
@@ -355,16 +346,7 @@
     - name: remove udp testing target groups
       elb_target_group:
         name: "{{ item }}"
-        protocol: udp
-        port: 53
-        vpc_id: '{{ vpc.vpc.id }}'
         state: absent
-        target_type: instance
-        tags:
-          Description: "Created by {{ resource_prefix }}"
-          Protocol: "UDP"
-        wait: true
-        wait_timeout: 400
       register: removed
       retries: 10
       until: removed is not failed
