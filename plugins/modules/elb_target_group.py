@@ -844,12 +844,7 @@ def main():
         wait=dict(type='bool', default=False)
     )
 
-    module = AnsibleAWSModule(argument_spec=argument_spec,
-                              required_if=[
-                                  ['target_type', 'instance', ['protocol', 'port', 'vpc_id']],
-                                  ['target_type', 'ip', ['protocol', 'port', 'vpc_id']],
-                              ]
-                              )
+    module = AnsibleAWSModule(argument_spec=argument_spec)
 
     if module.params.get('target_type') is None:
         module.params['target_type'] = 'instance'
@@ -857,6 +852,12 @@ def main():
     connection = module.client('elbv2', retry_decorator=AWSRetry.jittered_backoff(retries=10))
 
     if module.params.get('state') == 'present':
+        module = AnsibleAWSModule(argument_spec=argument_spec,
+                                  required_if=[
+                                      ['target_type', 'instance', ['protocol', 'port', 'vpc_id']],
+                                      ['target_type', 'ip', ['protocol', 'port', 'vpc_id']],
+                                  ]
+                                  )
         create_or_update_target_group(connection, module)
     else:
         delete_target_group(connection, module)
